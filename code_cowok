@@ -1,0 +1,210 @@
+package com.example.myapplication
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            AvatarScreenFull()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AvatarScreenFull() {
+    // states for toggles (elemen baru ditambahkan)
+    var showBody by remember { mutableStateOf(true) }
+    var showHair by remember { mutableStateOf(true) }
+    var showEyebrow by remember { mutableStateOf(true) }
+    var showEyes by remember { mutableStateOf(true) }
+    var showMoustache by remember { mutableStateOf(true) }
+    var showBeard by remember { mutableStateOf(true) }
+
+    // ukuran dan offset relatif tiap elemen (sesuaikan kalau perlu)
+    val BODY_RATIO = 0.65f
+    val HAIR_RATIO = 0.70f
+    val HAIR_OFFSET_Y = (-120).dp
+    val EYEBROW_RATIO = 0.30f
+    val EYEBROW_OFFSET_Y = (-55).dp
+    val EYES_RATIO = 0.24f
+    val EYES_OFFSET_Y = (-6).dp
+    val MOUSTACHE_RATIO = 0.28f
+    val MOUSTACHE_OFFSET_Y = 40.dp
+    val BEARD_RATIO = 0.40f
+    val BEARD_OFFSET_Y = 100.dp
+
+
+    // layar utama
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.Transparent
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // pattern atas
+            Image(
+                painter = painterResource(R.drawable.paper),
+                contentDescription = "Top pattern",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(72.dp)
+                    .align(Alignment.TopCenter)
+            )
+
+            // judul merah
+            Text(
+                text = "Hello Mr.Head",
+                fontSize = 36.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color(0xFFC62828),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 12.dp)
+            )
+
+            
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 72.dp),
+                contentAlignment = Alignment.Center
+            ) {
+
+                // face base
+                Image(
+                    painter = painterResource(R.drawable.body),
+                    contentDescription = "Body Base",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize(BODY_RATIO)
+                )
+
+                // hair (di atas wajah)
+                if (showHair) {
+                    Image(
+                        painter = painterResource(R.drawable.hair),
+                        contentDescription = "Hair",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxSize(HAIR_RATIO)
+                            .offset(y = HAIR_OFFSET_Y)
+                    )
+                }
+
+                // eyebrow
+                if (showEyebrow) {
+                    Image(
+                        painter = painterResource(R.drawable.eyebrow),
+                        contentDescription = "Eyebrow",
+                        modifier = Modifier
+                            .fillMaxSize(EYEBROW_RATIO)
+                            .offset(y = EYEBROW_OFFSET_Y)
+                    )
+                }
+
+                // eyes
+                if (showEyes) {
+                    Image(
+                        painter = painterResource(R.drawable.eyes),
+                        contentDescription = "Eyes",
+                        modifier = Modifier
+                            .fillMaxSize(EYES_RATIO)
+                            .offset(y = EYES_OFFSET_Y)
+                    )
+                }
+
+                // moustache
+                if (showMoustache) {
+                    Image(
+                        painter = painterResource(R.drawable.moustache),
+                        contentDescription = "Moustache",
+                        modifier = Modifier
+                            .fillMaxSize(MOUSTACHE_RATIO)
+                            .offset(y = MOUSTACHE_OFFSET_Y)
+                    )
+                }
+
+                // beard
+                if (showBeard) {
+                    Image(
+                        painter = painterResource(R.drawable.beard),
+                        contentDescription = "Beard",
+                        modifier = Modifier
+                            .fillMaxSize(BEARD_RATIO)
+                            .offset(y = BEARD_OFFSET_Y)
+                    )
+                }
+            }
+
+            // daftar toggle di kiri-bawah
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 28.dp, bottom = 80.dp)
+                    .widthIn(min = 140.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                AvatarToggleCompact("Body", showBody) { showBody = it }
+                AvatarToggleCompact("Hair", showHair) { showHair = it }
+                AvatarToggleCompact("Eyebrow", showEyebrow) { showEyebrow = it }
+                AvatarToggleCompact("Eyes", showEyes) { showEyes = it }
+                AvatarToggleCompact("Moustache", showMoustache) { showMoustache = it }
+                AvatarToggleCompact("Beard", showBeard) { showBeard = it }
+            }
+        }
+    }
+}
+
+@Composable
+fun AvatarToggleCompact(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = CheckboxDefaults.colors(
+                checkedColor = Color(0xFF00BFA5),
+                uncheckedColor = Color(0xFF7C7C7C),
+                checkmarkColor = Color.White
+            ),
+            modifier = Modifier
+                .size(28.dp)
+                .clip(RoundedCornerShape(6.dp))
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = label,
+            fontSize = 18.sp,
+            color = Color(0xFF2E2E2E)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewAvatarScreenFull() {
+    AvatarScreenFull()
+}
